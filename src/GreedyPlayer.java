@@ -9,8 +9,9 @@
  * 
  * Written:       	 (04/25/22)
  * 
- * Credits:          (Abby Hakewill, Apoorva Kanekal)
+ * Credits:          (Abby Hakewill, Apoorva Kanekal,)
  **************************************************************************** */
+
 public class GreedyPlayer implements Player {
 	private int cols;
 	private int id;
@@ -21,17 +22,18 @@ public class GreedyPlayer implements Player {
 
 	
 	public String name() {
-		return "Greedy";
+		return "Greedy";//Return the name of this player.
 	}
 
-	public  void init(int id, int rows, int cols, int msecPerMove) {
+	public  void init(int id, int rows, int cols, int msecPerMove) { 
 		enemyId = 3-id;
 		this.cols = cols;
 		this.id = id;
 
 	}
 
-	public void calcMove(Connect4Board board, int oppMoveCol, Arbitrator arb) throws TimeUpException{
+	public void calcMove(Connect4Board board, int oppMoveCol, Arbitrator arb)//calculates next move
+			throws TimeUpException{//If the game determines the player has run out of time
 		if (board.isFull())
 			throw new Error("The board is full");
 
@@ -127,10 +129,13 @@ public class GreedyPlayer implements Player {
 
 }
 
+	
+	
 	private class Move implements Comparable<Move>{
 		private int value;
 		private int column;
 
+		
 		
 		public Move(int column, int value) {
 			this.value = value;
@@ -138,6 +143,7 @@ public class GreedyPlayer implements Player {
 		}
 
 		public int compareTo(Move other) {
+			
 			return Integer.compare(this.value, other.value);
 		}
 	}

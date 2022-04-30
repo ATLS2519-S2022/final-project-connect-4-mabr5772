@@ -23,7 +23,7 @@ public class AlphaBetaPlayer implements Player {
 
 
 	public String name() {
-		return "alphaBeta";
+		return "alphaBetaPlayer"; //returns players name
 	}
 
 	public void init(int id,  int rows, int cols, int msecPerMove) {
@@ -35,7 +35,9 @@ public class AlphaBetaPlayer implements Player {
 
 	
 	
-	public void calcMove(Connect4Board board, int oppMoveCol, Arbitrator arb) throws TimeUpException{
+	public void calcMove(Connect4Board board, int oppMoveCol, Arbitrator arb)  //calculates next move
+			throws TimeUpException{ //player has run out of time
+		
 		if(board.isFull())
 			throw new Error ("The board is full!");
 
@@ -50,19 +52,20 @@ public class AlphaBetaPlayer implements Player {
 			}
 		}
 
-		int searchDepth = 1;
+		int searchDepth = 1; //depth search
 
 		
-		while (!arb.isTimeUp() && searchDepth <= board.numEmptyCells()) {
-			alphabeta(root, searchDepth, true, Integer.MIN_VALUE, Integer.MAX_VALUE , arb);
+		while (!arb.isTimeUp() && searchDepth <= board.numEmptyCells()) { 
+			alphaBeta(root, searchDepth, true, Integer.MIN_VALUE, Integer.MAX_VALUE , arb);
 			arb.setMove(root.chosenMove);
 			searchDepth++;
-		
+	
+			
 		}
 	}
 
 	
-	private int alphabeta(GameTree node, int depth, boolean maxminizingPlayer, int alpha, int beta, Arbitrator arb) {
+	private int alphaBeta(GameTree node, int depth, boolean maxminizingPlayer, int alph, int beta, Arbitrator arb) {
 		if (depth == 0 || node.isTerminal() || arb.isTimeUp()) {
 			node.value = evaluateNode(node);
 			return node.value;
@@ -70,8 +73,10 @@ public class AlphaBetaPlayer implements Player {
 
 		if (node.isLeaf()) {
 
+			
 			int moveId = maxminizingPlayer ? id : enemyId;
 
+			
 			for(int i = 0; i < cols; i++) {
 				if(!node.board.isColumnFull(i)) {
 					node.board.move(i, moveId);
@@ -82,11 +87,11 @@ public class AlphaBetaPlayer implements Player {
 				}
 			}
 		}
-
+//param  children = all legal moves for player from this board
 		if(maxminizingPlayer) {
 			int value = Integer.MIN_VALUE;
 			for(GameTree child: node.children) {
-				int newVal = alphabeta(child, depth -1, false, alpha, beta, arb);
+				int newVal = alphaBeta(child, depth -1, false, alph, beta, arb);
 				if(newVal > value) {
 					value = newVal;
 					node.value = value;
@@ -98,24 +103,29 @@ public class AlphaBetaPlayer implements Player {
 					if(newMoveDistFromCenter < currMoveDistFromCenter)
 						node.chosenMove = child.move;
 				}
-				if (alpha < value) {
-					alpha = value;
+				//alpha beta pruning
+				if (alph < value) { 
+					alph = value; //we have found a better best move
+					
+					
 				}
-				if(alpha >= beta) {
+				if(alph >= beta) {//cut off
 					break;
 				}
 			}
-			return value;
+			
+			return value; //this is our best move
 		}
 		else {
 			int value = Integer.MAX_VALUE;
 			for(GameTree child: node.children) {
-				int newVal = alphabeta(child, depth -1, true, alpha, beta, arb);
+				int newVal = alphaBeta(child, depth -1, true, alph, beta, arb);
 				if(newVal < value) {
 					value = newVal;
 					node.value = value;
 					node.chosenMove = child.move;
 				}
+				
 				else if (newVal == value) {
 					int currMoveDistFromCenter = Math.abs(cols/2 - node.chosenMove);
 					int newMoveDistFromCenter = Math.abs(cols/2 - child.move);
@@ -123,15 +133,15 @@ public class AlphaBetaPlayer implements Player {
 						node.chosenMove = child.move;
 				
 				}
-				if (beta > value) {
-					beta = value;
+				if (beta > value) {//opponent has found a better worse move
+					beta = value; 
 				}
-				if (alpha >= beta) {
+				if (alph >= beta) {// cut off
 					break;
 				}
 
 			}
-			return value;
+			return value; //this is the opponent's best move
 		}
 
 	}
