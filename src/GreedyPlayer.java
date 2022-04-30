@@ -48,7 +48,6 @@ public class GreedyPlayer implements Player {
 			}
 	}
 		
-		
 		Move bestMove = null;
 		for (int i = 0; i < possibleMoves.length; i++) {
 			if(bestMove == null)
@@ -127,8 +126,6 @@ public class GreedyPlayer implements Player {
 		return score;
 
 }
-
-	
 
 	private class Move implements Comparable<Move>{
 		private int value;
